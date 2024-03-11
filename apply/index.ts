@@ -9,6 +9,8 @@ import wait from '../utils/wait';
 const noop = () => { };
 
 async function clickEasyApplyButton(page: Page): Promise<void> {
+ // await page.waitForNavigation({ waitUntil: 'networkidle0' });
+ await page.waitForTimeout(5000);
   await page.waitForSelector('button', { visible: true });
   const buttonClicked = await page.evaluate(() => {
     const easyApplyButton = Array.from(document.querySelectorAll('button'))

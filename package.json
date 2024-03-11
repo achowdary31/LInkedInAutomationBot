@@ -10,9 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "exceljs": "^4.4.0",
     "languagedetect": "^2.0.0",
-    "puppeteer": "^19.7.1",
+    "playwright": "^1.42.1",
+    "puppeteer": "^19.11.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "zipcelx": "^1.6.2"
   }
 }

@@ -43,6 +43,12 @@ interface PARAMS {
  * Fetches job links as a user (logged in)
  */
 async function* fetchJobLinksUser({ page, location, keywords, workplace: { remote, onSite, hybrid }, jobTitle, jobDescription, jobDescriptionLanguages }: PARAMS): AsyncGenerator<[string, string, string]> {
+  const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+  const phoneRegex = /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/g;
+  const data = [
+    
+  ];
+
   let numSeenJobs = 0;
   let numMatchingJobs = 0;
   const fWt = [onSite, remote, hybrid].reduce((acc, c, i) => c ? [...acc, i + 1] : acc, [] as number[]).join(',');
@@ -94,7 +100,33 @@ async function* fetchJobLinksUser({ page, location, keywords, workplace: { remot
 
         const companyName = await page.$eval(`${selectors.searchResultListItem}:nth-child(${i + 1}) ${selectors.searchResultListItemCompanyName}`, el => (el as HTMLElement).innerText).catch(() => 'Unknown');;
         const jobDescription = await page.$eval(selectors.jobDescription, el => (el as HTMLElement).innerText);
-        const canApply = !!(await page.$(selectors.easyApplyButtonEnabled));
+        let emails = jobDescription.match(emailRegex) || [];
+        let phones = jobDescription.match(phoneRegex) || [];
+        if(emails.length!=0 || phones.length != 0)
+        { 
+          data.push([emails.toString(),phones.toString()])
+        }
+
+        const spanText = await page.evaluate(() => {
+          const span = document.querySelector('.artdeco-inline-feedback__message');
+          return span ? span.textContent : null; // Using .textContent instead of .innerText
+        });
+        let canApply = true;
+        if (spanText != null) {
+
+          if (spanText && spanText.includes('Applied')) {
+            console.log('The span contains the word "applied".');
+            canApply = false;
+          } else {
+            canApply = !!(await page.$(selectors.easyApplyButtonEnabled));
+          }
+        }
+        else {
+          canApply = !!(await page.$(selectors.easyApplyButtonEnabled));
+        }
+        if (jobDescription.toLowerCase().includes(('no c2c')) || jobDescription.toLowerCase().includes(('w2'))) {
+          canApply = false;
+        }
         const jobDescriptionLanguage = languageDetector.detect(jobDescription, 1)[0][0];
         const matchesLanguage = jobDescriptionLanguages.includes("any") || jobDescriptionLanguages.includes(jobDescriptionLanguage);
 
@@ -105,13 +137,41 @@ async function* fetchJobLinksUser({ page, location, keywords, workplace: { remot
         }
       } catch (e) {
         console.log(e);
+        await saveData(data);
       }
     }
 
     await wait(2000);
 
     numSeenJobs += jobListings.length;
+    await saveData(data);
   }
+}
+
+async function saveData( data : String[][]){
+  const ExcelJS = require('exceljs');
+  const fs = require('fs');
+  const filePath = './EmailsandPhonesApplied.xlsx';
+  (
+    async () => {
+    const workbook = new ExcelJS.Workbook();
+    if (fs.existsSync(filePath)) {
+        await workbook.xlsx.readFile(filePath);
+    } 
+
+    const sheetName = 'Automation';
+    let worksheet = workbook.getWorksheet(sheetName);
+
+    if (!worksheet) {
+        worksheet = workbook.addWorksheet(sheetName);
+    }
+
+    data.forEach(row => {
+      worksheet.addRow(row);
+  });
+    
+    await workbook.xlsx.writeFile(filePath);
+})();
 }
 
 export default fetchJobLinksUser;

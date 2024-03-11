@@ -4,14 +4,14 @@ export default {
   LINKEDIN_PASSWORD: "Iron_man@1124",
 
   // JOB SEARCH PARAMETERS
-  KEYWORDS: "full stack developer",
+  KEYWORDS: "full stack java developer",
   LOCATION: "United States",
   WORKPLACE: {
     REMOTE: true,
     ON_SITE: true,
     HYBRID: true,
   },
-  JOB_TITLE: "(Sr.|UI Developer|Senior|Java|java|Angular|J2Ee|angular|react|React|backend|back-end|Javascript|frontend|front-end|Full Stack|full stack|full-stack|nodejs|node|js).*(developer|engineer)",
+  JOB_TITLE: "(?!.*w2)(?!.*\\.NET)(developer|engineer)?.*?(ui|java|angular|j2ee|react|javascript|nodejs|node|js|frontend|front[- ]?end|backend|back[- ]?end|full[- ]?stack).*?(developer|engineer)?",
   JOB_DESCRIPTION: "^((?!(primeit))(.|[\n\r]))*$",
   JOB_DESCRIPTION_LANGUAGES: ["english"], // replace value with ["any"] to accept all job description laguages
 
