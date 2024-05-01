@@ -30,25 +30,23 @@ const askForPauseInput = async () => {
 };
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: false,
-    ignoreHTTPSErrors: true,
-    args: ["--disable-setuid-sandbox", "--no-sandbox",]
+  const chromeEndPoint = "ws://127.0.0.1:9222/devtools/browser/eb0bd1c9-543e-47eb-b353-16ea160b5160";
+  const browser = await puppeteer.connect({
+    browserWSEndpoint:chromeEndPoint,
   });
-  const context = await browser.createIncognitoBrowserContext();
-  const listingPage = await context.newPage();
+  const listingPage = await browser.newPage();
 
-  const pages = await browser.pages();
+  //const pages = await browser.newPage();
 
-  await pages[0].close();
+  //await pages[0].close();
 
-  await login({
-    page: listingPage,
-    email: config.LINKEDIN_EMAIL,
-    password: config.LINKEDIN_PASSWORD
-  });
+  // await login({
+  //   page: listingPage,
+  //   email: config.LINKEDIN_EMAIL,
+  //   password: config.LINKEDIN_PASSWORD
+  // });
 
-  askForPauseInput();
+  // askForPauseInput();
 
   const linkGenerator = fetchJobLinksUser({
     page: listingPage,
@@ -68,7 +66,7 @@ const askForPauseInput = async () => {
 
   for await (const [link, title, companyName] of linkGenerator) {
     if (!applicationPage || process.env.SINGLE_PAGE !== "true")
-      applicationPage = await context.newPage();
+      applicationPage = await browser.newPage();
 
     await applicationPage.bringToFront();
 

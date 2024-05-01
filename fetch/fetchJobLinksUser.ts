@@ -91,15 +91,18 @@ async function* fetchJobLinksUser({ page, location, keywords, workplace: { remot
           return [linkEl.href.trim(), linkEl.innerText.trim()];
         });
 
-        await page.waitForFunction(async (selectors) => {
-          const hasLoadedDescription = !!document.querySelector<HTMLElement>(selectors.jobDescription)?.innerText.trim();
-          const hasLoadedStatus = !!(document.querySelector(selectors.easyApplyButtonEnabled) || document.querySelector(selectors.appliedToJobFeedback));
-
-          return hasLoadedStatus && hasLoadedDescription;
-        }, {}, selectors);
-
-        const companyName = await page.$eval(`${selectors.searchResultListItem}:nth-child(${i + 1}) ${selectors.searchResultListItemCompanyName}`, el => (el as HTMLElement).innerText).catch(() => 'Unknown');;
-        const jobDescription = await page.$eval(selectors.jobDescription, el => (el as HTMLElement).innerText);
+        // await page.waitForFunction(async (selectors) => {
+        //   console.log('Checking if job description has loaded...');
+        //   const hasLoadedDescription = !!document.querySelector<HTMLElement>(selectors.jobDescription)?.innerText.trim();
+        //   console.log('Has loaded description:', hasLoadedDescription);
+        //   console.log('Checking if job status has loaded...');
+        //   const hasLoadedStatus = !!(document.querySelector(selectors.easyApplyButtonEnabled) || document.querySelector(selectors.appliedToJobFeedback));
+        //   console.log('Has loaded status:', hasLoadedStatus);
+        //   return hasLoadedStatus && hasLoadedDescription;
+        // }, {}, selectors);
+        
+        const companyName = await page.$eval('.job-details-jobs-unified-top-card__company-name a', el => el.innerText.trim()).catch(()=> 'Unknown');
+        const jobDescription = await page.$eval('#job-details', el => el.innerHTML);
         let emails = jobDescription.match(emailRegex) || [];
         let phones = jobDescription.match(phoneRegex) || [];
         if(emails.length!=0 || phones.length != 0)
@@ -126,6 +129,7 @@ async function* fetchJobLinksUser({ page, location, keywords, workplace: { remot
         }
         if (jobDescription.toLowerCase().includes(('no c2c')) || jobDescription.toLowerCase().includes(('w2'))) {
           canApply = false;
+          console.log("This is a w2 role" + companyName);
         }
         const jobDescriptionLanguage = languageDetector.detect(jobDescription, 1)[0][0];
         const matchesLanguage = jobDescriptionLanguages.includes("any") || jobDescriptionLanguages.includes(jobDescriptionLanguage);
@@ -137,14 +141,14 @@ async function* fetchJobLinksUser({ page, location, keywords, workplace: { remot
         }
       } catch (e) {
         console.log(e);
-        await saveData(data);
+       // await saveData(data);
       }
     }
 
     await wait(2000);
 
     numSeenJobs += jobListings.length;
-    await saveData(data);
+  //  await saveData(data);
   }
 }
 

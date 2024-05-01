@@ -1,10 +1,10 @@
 export default {
   // LOGIN DETAILS
-  LINKEDIN_EMAIL: "anirudhchowdaryjava31@gmail.com",
-  LINKEDIN_PASSWORD: "Iron_man@1124",
+  LINKEDIN_EMAIL: <emailId>,
+  LINKEDIN_PASSWORD: <Password> ,
 
   // JOB SEARCH PARAMETERS
-  KEYWORDS: "full stack java developer",
+  KEYWORDS: "developer",
   LOCATION: "United States",
   WORKPLACE: {
     REMOTE: true,

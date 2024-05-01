@@ -7,7 +7,7 @@ const buildUrl = (base: string, searchParams: { [x: string]: string }) => {
 
   url.searchParams.append("f_TPR","r86400");
   url.searchParams.append("f_JT","C");
-//  url.searchParams.append("sortBy","DD");
+ url.searchParams.append("sortBy","DD");
 
   return url;
 };
