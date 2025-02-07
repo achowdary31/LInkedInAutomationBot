@@ -16,7 +16,7 @@ export default {
   JOB_DESCRIPTION_LANGUAGES: ["english"], // replace value with ["any"] to accept all job description laguages
 
   // FORM DATA
-  PHONE: "4698440553",
+  PHONE: <>,
   CV_PATH: "",
   COVER_LETTER_PATH: "",
   HOME_CITY: "",
@@ -58,13 +58,11 @@ export default {
     "english": "professional",
   },
   REQUIRES_VISA_SPONSORSHIP: false,
-  TEXT_FIELDS: {  "pay": "70" , "experience" : "5" , "w2":"No" },
+  TEXT_FIELDS: {  "pay": "70" , "experience" : "5" },
   BOOLEANS: {
     "bachelor": true,
     "authorized": true,
-    "w2": false,
   },
-  MULTIPLE_CHOICE_FIELDS: { "w2": "No" },
 
   // OTHER SETTINGS
   SINGLE_PAGE: false,
